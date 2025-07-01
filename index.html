@@ -36,34 +36,25 @@
     Batman1788 &copy; 菜单 | <a href="https://t.me/batman1788" target="_blank">Telegram下单</a>
   </div>
   <script>
-    // 填你的 SheetID、Tab
+    // 你的 Sheet ID 和表名
     const SHEET_ID = "1_vY7Cu22ZjBjTH8aS9Fze3_TN7HCkHUm012YtSZWrys";
     const SHEET_TAB = "beanmenu";
-    const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_TAB}`;
+    const SHEET_URL = `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_TAB}`;
 
     fetch(SHEET_URL)
-      .then(res => res.text())
-      .then(txt => {
-        const json = JSON.parse(txt.match(/(?<=\().*(?=\);)/s)[0]);
-        const cols = json.table.cols.map(col => col.label.toLowerCase());
-        const html = json.table.rows.map(row => {
-          const obj = {};
-          row.c.forEach((cell, i) => obj[cols[i]] = cell ? cell.v : "");
-
-          // 多规格拼接
+      .then(res => res.json())
+      .then(rows => {
+        const html = rows.map(obj => {
           let specs = '';
           for(let i=1;i<=3;i++){
             if(obj['spec'+i] && obj['price'+i]){
-              specs += `<span class="menu-spec">${obj['spec'+i']}<span class="menu-price">${obj['price'+i]}</span></span>`;
+              specs += `<span class="menu-spec">${obj['spec'+i]}<span class="menu-price">${obj['price'+i]}</span></span>`;
             }
           }
-
-          // THC/CBD 支持2列合成
           let thccbd = obj.thccbd || '';
           if(!thccbd && (obj.thc || obj.cbd)) {
             thccbd = (obj.thc ? obj.thc : '') + (obj.cbd ? (' / ' + obj.cbd) : '');
           }
-
           return `
             <div class="menu-item">
               ${obj.img ? `<img class="menu-img" src="${obj.img}" loading="lazy"/>` : ""}
