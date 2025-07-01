@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mrbean78 Menu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { background: #1b1c1e; color: #fff; font-family: Arial, sans-serif; }
+    .menu-wrap { max-width: 600px; margin: 30px auto; padding: 20px;}
+    .menu-item { background: #232527; border-radius: 16px; margin-bottom: 16px; padding: 16px; display: flex; align-items: center; box-shadow: 0 2px 8px #0002;}
+    .menu-img { width: 70px; height: 70px; object-fit: cover; border-radius: 12px; margin-right: 16px;}
+    .menu-info { flex:1; }
+    .menu-name { font-size: 1.2em; font-weight: bold; }
+    .menu-desc { font-size: .95em; color: #bbb; margin: 3px 0 7px 0;}
+    .menu-price { color: #71ff71; font-weight: bold;}
+  </style>
+</head>
+<body>
+  <div class="menu-wrap" id="menu"></div>
+  <script>
+    // 1. 替换成你的 SheetID 和 tab名
+    const SHEET_ID = "1_vY7Cu22ZjBjTH8aS9Fze3_TN7HCkHUm012YtSZWrys";
+    const SHEET_TAB = "beanmenu";
+    const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_TAB}`;
+
+    fetch(SHEET_URL)
+      .then(res => res.text())
+      .then(txt => {
+        const json = JSON.parse(txt.match(/(?<=\().*(?=\);)/s)[0]);
+        const cols = json.table.cols.map(col => col.label.toLowerCase());
+        const html = json.table.rows.map(row => {
+          const obj = {};
+          row.c.forEach((cell, i) => obj[cols[i]] = cell ? cell.v : "");
+          return `
+            <div class="menu-item">
+              ${obj.img ? `<img class="menu-img" src="${obj.img}"/>` : ""}
+              <div class="menu-info">
+                <div class="menu-name">${obj.name || ""}</div>
+                <div class="menu-desc">${obj.desc || ""}</div>
+                <div class="menu-price">${obj.price || ""}</div>
+              </div>
+            </div>`;
+        }).join('');
+        document.getElementById('menu').innerHTML = html;
+      })
+      .catch(err => {
+        document.getElementById('menu').innerHTML = "菜单加载失败，请刷新重试。";
+        console.error(err);
+      });
+  </script>
+</body>
+</html>
