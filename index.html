@@ -7,24 +7,25 @@
   <style>
     body { background: #141414; color: #fff; font-family: 'Segoe UI','PingFang SC','Microsoft YaHei',Arial,sans-serif; margin:0; }
     .menu-wrap { max-width: 500px; margin: 0 auto; padding: 16px 0 62px 0;}
-    .menu-item { display: flex; background: #232527; border-radius: 18px; margin:0 12px 18px 12px; padding:14px 12px; box-shadow: 0 3px 16px #0002; align-items: flex-start;}
-    .menu-img { width: 66px; height: 66px; border-radius: 12px; object-fit: cover; margin-right: 13px; background: #292929; border: 1px solid #24272a; flex-shrink: 0;}
-    .menu-info { flex: 1; min-width: 0;}
-    .menu-name { font-size: 1.15em; font-weight: bold; margin-bottom: 3px; display: flex; align-items:center;}
+    .menu-item { background: #232527; border-radius: 18px; margin:0 12px 18px 12px; padding:0 0 10px 0; box-shadow: 0 3px 16px #0002; overflow: hidden; display: flex; flex-direction: column; align-items: center;}
+    .menu-img { width: 100%; max-width: 450px; aspect-ratio: 1.6/1; object-fit: cover; background: #292929; border-bottom: 1px solid #242729; display:block; }
+    .menu-info { width: 100%; padding: 0 14px; box-sizing: border-box; min-width: 0;}
+    .menu-name { font-size: 1.15em; font-weight: bold; margin: 10px 0 3px 0; display: flex; align-items:center;}
     .menu-badge { display:inline-block; background: linear-gradient(90deg,#ff6b21,#fcb900); color:#fff; border-radius:10px; font-size:0.86em; font-weight:600; padding:1.5px 7px 2px 7px; margin-left:7px; margin-right:3px;}
     .menu-type { display:inline-block; background: #2ac8c8; color:#fff; font-size:0.82em; border-radius:9px; padding:1px 7px; margin-left:7px;}
     .menu-title { color: #ffc107; font-weight:400; font-size:.98em; margin-bottom:1px; margin-right:4px;}
     .menu-thccbd { color:#92e7c2; font-size:0.98em; font-weight:500; margin-bottom:2px; margin-right:10px;}
-    .menu-specs { margin:5px 0 0 0; display: flex; gap:12px; flex-wrap: wrap;}
+    .menu-specs { margin:7px 0 0 0; display: flex; gap:12px; flex-wrap: wrap;}
     .menu-spec { background:#1b3432; color:#95ffdc; font-size:1.01em; border-radius:8px; padding:2.5px 10px; margin-right:2px; display:inline-block;}
     .menu-price { color: #48ef88; font-weight:600; font-size:1.1em; margin-left:3px;}
-    .menu-desc { font-size:.98em; color:#c8c8c8; margin:7px 0 0 0; line-height:1.45;}
+    .menu-desc { font-size:.98em; color:#c8c8c8; margin:10px 0 0 0; line-height:1.45;}
     @media (max-width:520px) {
       .menu-wrap { max-width: 100vw; padding: 5px 0 60px 0;}
-      .menu-item { margin: 0 4vw 14px 4vw; padding: 11px 7px;}
-      .menu-img { width: 54px; height: 54px;}
+      .menu-item { margin: 0 4vw 14px 4vw; }
+      .menu-img { max-width: 100vw; }
       .menu-name { font-size: 1em;}
       .menu-type, .menu-badge { font-size:.84em;}
+      .menu-info { padding: 0 6vw; }
     }
     .footer { position: fixed; left:0; bottom:0; width:100vw; color:#aaa; background: #15181a; font-size:.97em; text-align: center; padding:12px 0 9px 0; z-index:22; border-top: 1px solid #242729;}
     a { color: #67f7be; }
@@ -33,7 +34,7 @@
 <body>
   <div class="menu-wrap" id="menu"></div>
   <div class="footer">
-    Mrbean78 &copy; Menu | <a href="http://t.me/MrBean_78" target="_blank">Telegram-Order</a>
+    Batman1788 &copy; 菜单 | <a href="https://t.me/batman1788" target="_blank">Telegram下单</a>
   </div>
   <script>
     // 你的 Sheet ID 和表名
