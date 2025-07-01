@@ -8,7 +8,7 @@
     body { background: #141414; color: #fff; font-family: 'Segoe UI','PingFang SC','Microsoft YaHei',Arial,sans-serif; margin:0; }
     .menu-wrap { max-width: 500px; margin: 0 auto; padding: 16px 0 62px 0;}
     .menu-item { background: #232527; border-radius: 18px; margin:0 12px 18px 12px; padding:0 0 10px 0; box-shadow: 0 3px 16px #0002; overflow: hidden; display: flex; flex-direction: column; align-items: center;}
-    .menu-img { width: 100%; max-width: 450px; aspect-ratio: 1.6/1; object-fit: cover; background: #292929; border-bottom: 1px solid #242729; display:block; }
+    .menu-img { width: 100%; max-width: 450px; aspect-ratio: 1.6/1; object-fit: cover; background: #292929; border-bottom: 1px solid #242729; display:block; cursor: zoom-in; transition: filter .2s;}
     .menu-info { width: 100%; padding: 0 14px; box-sizing: border-box; min-width: 0;}
     .menu-name { font-size: 1.15em; font-weight: bold; margin: 10px 0 3px 0; display: flex; align-items:center;}
     .menu-badge { display:inline-block; background: linear-gradient(90deg,#ff6b21,#fcb900); color:#fff; border-radius:10px; font-size:0.86em; font-weight:600; padding:1.5px 7px 2px 7px; margin-left:7px; margin-right:3px;}
@@ -29,18 +29,52 @@
     }
     .footer { position: fixed; left:0; bottom:0; width:100vw; color:#aaa; background: #15181a; font-size:.97em; text-align: center; padding:12px 0 9px 0; z-index:22; border-top: 1px solid #242729;}
     a { color: #67f7be; }
+
+    /* 放大图样式 */
+    .img-viewer-bg {
+      position:fixed; left:0;top:0;width:100vw;height:100vh;
+      background:rgba(18,20,23,0.92); z-index:999;
+      display:flex;align-items:center;justify-content:center;
+      animation: fadeInBg .18s;
+    }
+    @keyframes fadeInBg { from {background:rgba(18,20,23,0);} }
+    .img-viewer-img {
+      max-width:92vw; max-height:84vh; border-radius:18px; box-shadow:0 3px 30px #000a;
+      animation: fadeInImg .19s;
+      background:#191b1c;
+      cursor: zoom-out;
+      border:2px solid #232528;
+      transition: box-shadow .2s;
+    }
+    @keyframes fadeInImg { from { transform: scale(0.94); opacity:0; } }
+    .img-viewer-bg:active .img-viewer-img { box-shadow:0 1px 10px #0007;}
   </style>
 </head>
 <body>
   <div class="menu-wrap" id="menu"></div>
   <div class="footer">
-    Batman1788 &copy; 菜单 | <a href="https://t.me/batman1788" target="_blank">Telegram下单</a>
+    Mrbean78 &copy; Menu | <a href="http://t.me/MrBean_78" target="_blank">Telegram-Order</a>
   </div>
   <script>
-    // 你的 Sheet ID 和表名
+    // Sheet ID 和表名
     const SHEET_ID = "1_vY7Cu22ZjBjTH8aS9Fze3_TN7HCkHUm012YtSZWrys";
     const SHEET_TAB = "beanmenu";
     const SHEET_URL = `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_TAB}`;
+
+    // 点击图片放大
+    function showImgViewer(src) {
+      if(!src) return;
+      // 避免重复弹窗
+      if(document.getElementById("img-viewer-bg")) return;
+      const bg = document.createElement("div");
+      bg.className = "img-viewer-bg";
+      bg.id = "img-viewer-bg";
+      bg.innerHTML = `<img class="img-viewer-img" src="${src}">`;
+      bg.onclick = function() {
+        document.body.removeChild(bg);
+      }
+      document.body.appendChild(bg);
+    }
 
     fetch(SHEET_URL)
       .then(res => res.json())
@@ -58,7 +92,7 @@
           }
           return `
             <div class="menu-item">
-              ${obj.img ? `<img class="menu-img" src="${obj.img}" loading="lazy"/>` : ""}
+              ${obj.img ? `<img class="menu-img" src="${obj.img}" loading="lazy" onclick="showImgViewer('${obj.img.replace(/'/g,"\\'")}')" />` : ""}
               <div class="menu-info">
                 <div class="menu-name">
                   ${obj.name || ""}
@@ -76,6 +110,7 @@
           `;
         }).join('');
         document.getElementById('menu').innerHTML = html || `<div style="text-align:center;color:#ccc;margin-top:40px;">暂无菜单内容</div>`;
+        window.showImgViewer = showImgViewer; // 挂全局，事件用
       })
       .catch(err => {
         document.getElementById('menu').innerHTML = "<div style='text-align:center;color:#fff;margin-top:36vw;font-size:1.08em;'>菜单加载失败，请刷新重试。</div>";
