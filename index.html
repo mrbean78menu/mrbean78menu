@@ -1,25 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <title>Mrbean78 Menu</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <style>
-    body { background: #1b1c1e; color: #fff; font-family: Arial, sans-serif; }
-    .menu-wrap { max-width: 600px; margin: 30px auto; padding: 20px;}
-    .menu-item { background: #232527; border-radius: 16px; margin-bottom: 16px; padding: 16px; display: flex; align-items: center; box-shadow: 0 2px 8px #0002;}
-    .menu-img { width: 70px; height: 70px; object-fit: cover; border-radius: 12px; margin-right: 16px;}
-    .menu-info { flex:1; }
-    .menu-name { font-size: 1.2em; font-weight: bold; }
-    .menu-desc { font-size: .95em; color: #bbb; margin: 3px 0 7px 0;}
-    .menu-price { color: #71ff71; font-weight: bold;}
+    body { background: #141414; color: #fff; font-family: 'Segoe UI','PingFang SC','Microsoft YaHei',Arial,sans-serif; margin:0; }
+    .menu-wrap { max-width: 500px; margin: 0 auto; padding: 16px 0 62px 0;}
+    .menu-item { display: flex; background: #232527; border-radius: 18px; margin:0 12px 18px 12px; padding:14px 12px; box-shadow: 0 3px 16px #0002; align-items: flex-start;}
+    .menu-img { width: 66px; height: 66px; border-radius: 12px; object-fit: cover; margin-right: 13px; background: #292929; border: 1px solid #24272a; flex-shrink: 0;}
+    .menu-info { flex: 1; min-width: 0;}
+    .menu-name { font-size: 1.15em; font-weight: bold; margin-bottom: 3px; display: flex; align-items:center;}
+    .menu-badge { display:inline-block; background: linear-gradient(90deg,#ff6b21,#fcb900); color:#fff; border-radius:10px; font-size:0.86em; font-weight:600; padding:1.5px 7px 2px 7px; margin-left:7px; margin-right:3px;}
+    .menu-type { display:inline-block; background: #2ac8c8; color:#fff; font-size:0.82em; border-radius:9px; padding:1px 7px; margin-left:7px;}
+    .menu-title { color: #ffc107; font-weight:400; font-size:.98em; margin-bottom:1px; margin-right:4px;}
+    .menu-thccbd { color:#92e7c2; font-size:0.98em; font-weight:500; margin-bottom:2px; margin-right:10px;}
+    .menu-specs { margin:5px 0 0 0; display: flex; gap:12px; flex-wrap: wrap;}
+    .menu-spec { background:#1b3432; color:#95ffdc; font-size:1.01em; border-radius:8px; padding:2.5px 10px; margin-right:2px; display:inline-block;}
+    .menu-price { color: #48ef88; font-weight:600; font-size:1.1em; margin-left:3px;}
+    .menu-desc { font-size:.98em; color:#c8c8c8; margin:7px 0 0 0; line-height:1.45;}
+    @media (max-width:520px) {
+      .menu-wrap { max-width: 100vw; padding: 5px 0 60px 0;}
+      .menu-item { margin: 0 4vw 14px 4vw; padding: 11px 7px;}
+      .menu-img { width: 54px; height: 54px;}
+      .menu-name { font-size: 1em;}
+      .menu-type, .menu-badge { font-size:.84em;}
+    }
+    .footer { position: fixed; left:0; bottom:0; width:100vw; color:#aaa; background: #15181a; font-size:.97em; text-align: center; padding:12px 0 9px 0; z-index:22; border-top: 1px solid #242729;}
+    a { color: #67f7be; }
   </style>
 </head>
 <body>
   <div class="menu-wrap" id="menu"></div>
+  <div class="footer">
+    Batman1788 &copy; 菜单 | <a href="https://t.me/batman1788" target="_blank">Telegram下单</a>
+  </div>
   <script>
-    // 1. 替换成你的 SheetID 和 tab名
-    const SHEET_ID = "1_vY7Cu22ZjBjTH8aS9Fze3_TN7HCkHUm012YtSZWrys";
+    // 填你的 SheetID、Tab
+    const SHEET_ID = "1_vY7Cu22ZjBjTH8aS9Fze3_TN7HCKHUmO12YtSZWrys";
     const SHEET_TAB = "beanmenu";
     const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_TAB}`;
 
@@ -31,20 +49,44 @@
         const html = json.table.rows.map(row => {
           const obj = {};
           row.c.forEach((cell, i) => obj[cols[i]] = cell ? cell.v : "");
+
+          // 多规格拼接
+          let specs = '';
+          for(let i=1;i<=3;i++){
+            if(obj['spec'+i] && obj['price'+i]){
+              specs += `<span class="menu-spec">${obj['spec'+i']}<span class="menu-price">${obj['price'+i]}</span></span>`;
+            }
+          }
+
+          // THC/CBD 支持2列合成
+          let thccbd = obj.thccbd || '';
+          if(!thccbd && (obj.thc || obj.cbd)) {
+            thccbd = (obj.thc ? obj.thc : '') + (obj.cbd ? (' / ' + obj.cbd) : '');
+          }
+
           return `
             <div class="menu-item">
-              ${obj.img ? `<img class="menu-img" src="${obj.img}"/>` : ""}
+              ${obj.img ? `<img class="menu-img" src="${obj.img}" loading="lazy"/>` : ""}
               <div class="menu-info">
-                <div class="menu-name">${obj.name || ""}</div>
-                <div class="menu-desc">${obj.desc || ""}</div>
-                <div class="menu-price">${obj.price || ""}</div>
+                <div class="menu-name">
+                  ${obj.name || ""}
+                  ${obj.badge ? `<span class="menu-badge">${obj.badge}</span>` : ""}
+                  ${obj.type ? `<span class="menu-type">${obj.type}</span>` : ""}
+                </div>
+                <div style="display:flex;align-items:center;gap:9px;margin-bottom:2px;">
+                  ${obj.title ? `<span class="menu-title">${obj.title}</span>` : ""}
+                  ${thccbd ? `<span class="menu-thccbd">THC/CBD: ${thccbd}</span>` : ""}
+                </div>
+                <div class="menu-specs">${specs}</div>
+                ${obj.desc ? `<div class="menu-desc">${obj.desc}</div>` : ""}
               </div>
-            </div>`;
+            </div>
+          `;
         }).join('');
-        document.getElementById('menu').innerHTML = html;
+        document.getElementById('menu').innerHTML = html || `<div style="text-align:center;color:#ccc;margin-top:40px;">暂无菜单内容</div>`;
       })
       .catch(err => {
-        document.getElementById('menu').innerHTML = "菜单加载失败，请刷新重试。";
+        document.getElementById('menu').innerHTML = "<div style='text-align:center;color:#fff;margin-top:36vw;font-size:1.08em;'>菜单加载失败，请刷新重试。</div>";
         console.error(err);
       });
   </script>
